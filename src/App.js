@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
+// App.js
+import React, { useEffect, useState } from "react";
 import "./App.css";
 /* ethers 変数を使えるようにする*/
 import { ethers } from "ethers";
@@ -14,12 +15,12 @@ const App = () => {
   const [allWaves, setAllWaves] = useState([]);
   console.log("currentAccount: ", currentAccount);
   /* デプロイされたコントラクトのアドレスを保持する変数を作成 */
-  const contractAddress = "0xB46c5FAcC0eFee3E19D630aCfF660D3c36399631";
+  const contractAddress = "0x0BE4F5e8F77473fbC5A91F4633d9B4aff1c45458";
   /* コントラクトからすべてのwavesを取得するメソッドを作成 */
   /* ABIの内容を参照する変数を作成 */
   const contractABI = abi.abi;
 
-  const getAllWaves = useCallback(async () => {
+  const getAllWaves = async () => {
     const { ethereum } = window;
 
     try {
@@ -49,7 +50,7 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
-  },[contractABI]);
+  };
 
   /**
    * `emit`されたイベントをフロントエンドに反映させる
@@ -68,7 +69,7 @@ const App = () => {
         },
       ]);
     };
-    
+
     /* NewWaveイベントがコントラクトから発信されたときに、情報をを受け取ります */
     if (window.ethereum) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -87,10 +88,10 @@ const App = () => {
         wavePortalContract.off("NewWave", onNewWave);
       }
     };
-  }, [contractABI]);
+  }, []);
 
   /* window.ethereumにアクセスできることを確認する関数を実装 */
-  const checkIfWalletIsConnected = useCallback(async () => {
+  const checkIfWalletIsConnected = async () => {
     try {
       const { ethereum } = window;
       if (!ethereum) {
@@ -112,7 +113,7 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [getAllWaves]);
+  };
   /* connectWalletメソッドを実装 */
   const connectWallet = async () => {
     try {
@@ -170,7 +171,7 @@ const App = () => {
           "Contract balance after wave:",
           ethers.utils.formatEther(contractBalance_post)
         );
-      } else {
+        } else {
         console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
@@ -181,7 +182,7 @@ const App = () => {
   /* WEBページがロードされたときにcheckIfWalletIsConnected()を実行 */
   useEffect(() => {
     checkIfWalletIsConnected();
-  }, [checkIfWalletIsConnected]);
+  }, []);
 
   return (
     <div className="mainContainer">
