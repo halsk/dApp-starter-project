@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./App.css";
 /* ethers 変数を使えるようにする*/
 import { ethers } from "ethers";
@@ -19,7 +19,7 @@ const App = () => {
   /* ABIの内容を参照する変数を作成 */
   const contractABI = abi.abi;
 
-  const getAllWaves = async () => {
+  const getAllWaves = useCallback(async () => {
     const { ethereum } = window;
 
     try {
@@ -49,7 +49,7 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  },[contractABI]);
 
   /**
    * `emit`されたイベントをフロントエンドに反映させる
@@ -90,7 +90,7 @@ const App = () => {
   }, [contractABI]);
 
   /* window.ethereumにアクセスできることを確認する関数を実装 */
-  const checkIfWalletIsConnected = async () => {
+  const checkIfWalletIsConnected = useCallback(async () => {
     try {
       const { ethereum } = window;
       if (!ethereum) {
@@ -112,7 +112,7 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [getAllWaves]);
   /* connectWalletメソッドを実装 */
   const connectWallet = async () => {
     try {
@@ -145,6 +145,8 @@ const App = () => {
         );
         let count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber());
+        let contractBalance = await provider.getBalance(wavePortalContract.address);
+        console.log("Contract balance:", ethers.utils.formatEther(contractBalance));
         /* コントラクトに👋（wave）を書き込む */
         const waveTxn = await wavePortalContract.wave(messageValue, {
           gasLimit: 300000,
@@ -154,6 +156,20 @@ const App = () => {
         console.log("Mined -- ", waveTxn.hash);
         count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber());
+        let contractBalance_post = await provider.getBalance(
+          wavePortalContract.address
+        );
+        /* コントラクトの残高が減っていることを確認 */
+        if (contractBalance_post < contractBalance) {
+          /* 減っていたら下記を出力 */
+          console.log("User won ETH!");
+        } else {
+          console.log("User didn't win ETH.");
+        }
+        console.log(
+          "Contract balance after wave:",
+          ethers.utils.formatEther(contractBalance_post)
+        );
       } else {
         console.log("Ethereum object doesn't exist!");
       }
