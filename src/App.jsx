@@ -22,7 +22,7 @@ const App = () => {
   /* ABIの内容を参照する変数を作成 */
   const contractABI = abi.abi;
 
-  const getAllWaves = async () => {
+  const getAllWaves = React.useCallback(async () => {
     const { ethereum } = window;
 
     try {
@@ -52,7 +52,7 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [contractABI]);
 
   /**
    * `emit`されたイベントをフロントエンドに反映させる
@@ -90,10 +90,10 @@ const App = () => {
         wavePortalContract.off("NewWave", onNewWave);
       }
     };
-  }, []);
+  }, [contractABI]);
 
   /* window.ethereumにアクセスできることを確認する関数を実装 */
-  const checkIfWalletIsConnected = async () => {
+  const checkIfWalletIsConnected = React.useCallback(async () => {
     try {
       const { ethereum } = window;
       if (!ethereum) {
@@ -120,7 +120,7 @@ const App = () => {
       toast("Error occurred");
       console.log(error);
     }
-  };
+  }, [getAllWaves]);
   /* connectWalletメソッドを実装 */
   const connectWallet = async () => {
     try {
@@ -190,7 +190,7 @@ const App = () => {
   /* WEBページがロードされたときにcheckIfWalletIsConnected()を実行 */
   useEffect(() => {
     checkIfWalletIsConnected();
-  }, []);
+  }, [checkIfWalletIsConnected]);
 
   return (
     <div className="mainContainer">
