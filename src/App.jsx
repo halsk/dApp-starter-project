@@ -1,6 +1,8 @@
 // App.js
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 /* ethers 変数を使えるようにする*/
 import { ethers } from "ethers";
 /* ABIファイルを含むWavePortal.jsonファイルをインポートする*/
@@ -96,21 +98,26 @@ const App = () => {
       const { ethereum } = window;
       if (!ethereum) {
         console.log("Make sure you have MetaMask!");
+        toast("Make sure you have MetaMask!");
         return;
       } else {
-        console.log("We have the ethereum object", ethereum);
+        console.log('We have the ethereum object: ', ethereum);
+        toast("We have the ethereum object");
       }
       /* ユーザーのウォレットへのアクセスが許可されているかどうかを確認 */
       const accounts = await ethereum.request({ method: "eth_accounts" });
       if (accounts.length !== 0) {
         const account = accounts[0];
         console.log("Found an authorized account:", account);
+        toast(`Found an authorized account: ${account}`);
         setCurrentAccount(account);
         getAllWaves();
       } else {
+        toast("No authorized account found");
         console.log("No authorized account found");
       }
     } catch (error) {
+      toast("Error occurred");
       console.log(error);
     }
   };
@@ -126,6 +133,7 @@ const App = () => {
         method: "eth_requestAccounts",
       });
       console.log("Connected: ", accounts[0]);
+      toast(`Connected: ${accounts[0]}`);
       setCurrentAccount(accounts[0]);
     } catch (error) {
       console.log(error);
@@ -193,6 +201,7 @@ const App = () => {
           </span>{" "}
           WELCOME!
         </div>
+        <ToastContainer />
         <div className="bio">
           イーサリアムウォレットを接続して、メッセージを作成したら、
           <span role="img" aria-label="hand-wave">
