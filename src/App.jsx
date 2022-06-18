@@ -7,8 +7,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ethers } from "ethers";
 /* ABIファイルを含むWavePortal.jsonファイルをインポートする*/
 import abi from "./utils/WavePortal.json";
+import { useReward } from 'react-rewards';
 
 const App = () => {
+  const [showTada, setShowTada] = React.useState(false)
   /* ユーザーのパブリックウォレットを保存するために使用する状態変数を定義 */
   const [currentAccount, setCurrentAccount] = useState("");
   /* ユーザーのメッセージを保存するために使用する状態変数を定義 */
@@ -21,6 +23,7 @@ const App = () => {
   /* コントラクトからすべてのwavesを取得するメソッドを作成 */
   /* ABIの内容を参照する変数を作成 */
   const contractABI = abi.abi;
+  const { reward } = useReward('rewardId', 'confetti');
 
   const getAllWaves = React.useCallback(async () => {
     const { ethereum } = window;
@@ -144,6 +147,7 @@ const App = () => {
   /* waveの回数をカウントする関数を実装 */
   const wave = async () => {
     try {
+      setShowTada(false)
       const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
@@ -181,6 +185,8 @@ const App = () => {
           /* 減っていたら下記を出力 */
           console.log("User won ETH!");
           toast("User won ETH!🎉");
+          setShowTada(true)
+          reward()
         } else {
           console.log("User didn't win ETH.");
           toast("User didn't win ETH.");
@@ -243,6 +249,11 @@ const App = () => {
             Wave at Me
           </button>
         )}
+        { showTada ? 
+        <div className="tada">
+          You won ETH<span role='img' aria-label="tada">🎉</span>!
+          <span id="rewardId" />
+        </div> : null }
         {/* メッセージボックスを実装*/}
         {currentAccount && (
           <textarea

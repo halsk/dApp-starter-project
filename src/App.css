@@ -23,6 +23,11 @@
   color: gray;
   margin-top: 16px;
 }
+.tada {
+  text-align: center;
+  color: rgb(192, 54, 51);
+  margin-top: 16px;
+}
 
 .waveButton {
   cursor: pointer;
