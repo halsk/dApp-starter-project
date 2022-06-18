@@ -48,6 +48,7 @@ const App = () => {
         setAllWaves(wavesCleaned);
       } else {
         console.log("Ethereum object doesn't exist!");
+        toast("Ethereum object doesn't exist!");
       }
     } catch (error) {
       console.log(error);
@@ -113,12 +114,13 @@ const App = () => {
         setCurrentAccount(account);
         getAllWaves();
       } else {
-        toast("No authorized account found");
         console.log("No authorized account found");
+        toast("No authorized account found");
       }
     } catch (error) {
-      toast("Error occurred");
       console.log(error);
+      toast("Error occurred");
+      toast(error)
     }
   }, [getAllWaves]);
   /* connectWalletメソッドを実装 */
@@ -154,17 +156,22 @@ const App = () => {
         );
         let count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber());
+        toast(`Retrieved total wave count...${count.toNumber()}`);
         let contractBalance = await provider.getBalance(wavePortalContract.address);
         console.log("Contract balance:", ethers.utils.formatEther(contractBalance));
+        toast(`Contract balance${ethers.utils.formatEther(contractBalance)}`);
         /* コントラクトに👋（wave）を書き込む */
         const waveTxn = await wavePortalContract.wave(messageValue, {
           gasLimit: 300000,
         });
         console.log("Mining...", waveTxn.hash);
+        toast(`Mining...${waveTxn.hash}`);
         await waveTxn.wait();
         console.log("Mined -- ", waveTxn.hash);
+        toast(`Mined -- ${waveTxn.hash}`);
         count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber());
+        toast(`Retrieved total wave count... ${count.toNumber()}`);
         let contractBalance_post = await provider.getBalance(
           wavePortalContract.address
         );
@@ -172,17 +179,23 @@ const App = () => {
         if (contractBalance_post < contractBalance) {
           /* 減っていたら下記を出力 */
           console.log("User won ETH!");
+          toast("User won ETH!");
         } else {
           console.log("User didn't win ETH.");
+          toast("User didn't win ETH.");
         }
         console.log(
           "Contract balance after wave:",
           ethers.utils.formatEther(contractBalance_post)
         );
+        toast(
+          `Contract balance after wave:${ethers.utils.formatEther(contractBalance_post)}`
+        );
         } else {
         console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
+      toast('error occurred')
       console.log(error);
     }
   };
@@ -201,7 +214,7 @@ const App = () => {
           </span>{" "}
           WELCOME!
         </div>
-        <ToastContainer />
+        <ToastContainer position="top-left" />
         <div className="bio">
           イーサリアムウォレットを接続して、メッセージを作成したら、
           <span role="img" aria-label="hand-wave">
