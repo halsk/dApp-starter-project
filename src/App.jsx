@@ -17,7 +17,7 @@ const App = () => {
   const [allWaves, setAllWaves] = useState([]);
   console.log("currentAccount: ", currentAccount);
   /* デプロイされたコントラクトのアドレスを保持する変数を作成 */
-  const contractAddress = "0x0BE4F5e8F77473fbC5A91F4633d9B4aff1c45458";
+  const contractAddress = "0xaeD64CE228c8a2807b4835D0fD9a99FCCF11284F";
   /* コントラクトからすべてのwavesを取得するメソッドを作成 */
   /* ABIの内容を参照する変数を作成 */
   const contractABI = abi.abi;
@@ -165,8 +165,9 @@ const App = () => {
           gasLimit: 300000,
         });
         console.log("Mining...", waveTxn.hash);
-        toast(`Mining...${waveTxn.hash}`);
+        toast(`Mining...${waveTxn.hash}`, {autoClose: false, closeOnClick:false});
         await waveTxn.wait();
+        toast.dismiss();
         console.log("Mined -- ", waveTxn.hash);
         toast(`Mined -- ${waveTxn.hash}`);
         count = await wavePortalContract.getTotalWaves();
@@ -179,7 +180,7 @@ const App = () => {
         if (contractBalance_post < contractBalance) {
           /* 減っていたら下記を出力 */
           console.log("User won ETH!");
-          toast("User won ETH!");
+          toast("User won ETH!🎉");
         } else {
           console.log("User didn't win ETH.");
           toast("User didn't win ETH.");
@@ -195,6 +196,7 @@ const App = () => {
         console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
+      toast.dismiss();
       toast('error occurred')
       console.log(error);
     }
